@@ -1,7 +1,8 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
 const cTable = require("console.table")
-var connection = mysql.createConnection({
+let departments = ["Human Resources", "Development", "Facilities"];
+const connection = mysql.createConnection({
     
     host: "localhost",
     port: 3306,
@@ -15,6 +16,14 @@ connection.connect(function (err) {
     init();
 });
 
+function displayQuery(qu) {
+
+    connection.query(qu, function(err, res){
+        if (err) throw err;
+        console.table(res);
+    })
+}
+
 function init() {
 var query = "SELECT employee.first_name, employee.last_name, role.title, department.name FROM employee INNER JOIN role ON role.id = employee.role_id JOIN department ON department.id = role.department_id" ;
 console.log("Welcome to the staff database! Here are our current employees:")
@@ -23,6 +32,7 @@ connection.query(query, function(err,res){
     console.table(res);
     menu();
 });
+}
 
 function menu() {
     inquirer.prompt({
@@ -73,7 +83,7 @@ function menu() {
     })
 
 }
-}
+
 
 function viewAll() { 
     var query = "SELECT employee.id, employee.first_name, employee.last_name, employee.manager_id, employee.role_id, role.title, role.salary, department.id, department.name FROM employee INNER JOIN role ON role.id = employee.role_id JOIN department ON department.id = role.department_id" ;
@@ -84,7 +94,21 @@ function viewAll() {
     });
 }
 
-function viewByDept() { }
+function viewByDept() {
+    const query = "SELECT employee.id, employee.first_name, employee.last_name, role.title, role.salary, department.name FROM employee INNER JOIN role ON role.id = employee.role_id JOIN department ON department.id = role.department_id WHERE ?" ;
+    inquirer.prompt({
+        name: "dept",
+        type: "list",
+        message: "Which department would you like to view?",
+        choices: departments
+        }).then(function (answer) {
+            connection.query(query, {name: answer.dept}, function(err, res){
+                if (err) throw err;
+               console.table(res); 
+            })
+            
+    })
+}
 
 function viewByMan() { }
 
