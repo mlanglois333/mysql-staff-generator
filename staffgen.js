@@ -16,7 +16,7 @@ connection.connect(function (err) {
 });
 
 function init() {
-var query = "SELECT employee.first_name, employee.last_name, role.title FROM employee INNER JOIN role ON role.id = employee.role_id" ;
+var query = "SELECT employee.first_name, employee.last_name, role.title, department.name FROM employee INNER JOIN role ON role.id = employee.role_id JOIN department ON department.id = role.department_id" ;
 console.log("Welcome to the staff database! Here are our current employees:")
 connection.query(query, function(err,res){
     if (err) throw err;
@@ -75,7 +75,10 @@ function menu() {
 }
 }
 
-function viewAll() { }
+function viewAll() { 
+
+    init();
+}
 
 function viewByDept() { }
 
