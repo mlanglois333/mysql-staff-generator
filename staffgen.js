@@ -13,5 +13,41 @@ var connection = mysql.createConnection({
 
 connection.connect(function(err) {
   if (err) throw err;
-  runSearch();
+  init();
 });
+ 
+function init() {
+
+    inquirer.prompt({
+        name:"action",
+        type:"list",
+        message:"Choose an option from the list:",
+        choices: [
+            "View all employees",
+            "View employees by department",
+            "View employees by manager",
+            "View all roles",
+            "Remove Employee",
+            "Update Employee Role",
+            "Update Employee Manager"
+
+        ]
+
+    })
+
+}
+
+function viewAll(){}
+
+function viewByDept(){}
+
+function viewByMan(){}
+
+function viewRoles(){}
+
+function removeEmp(){}
+
+function updateEmpRole(){}
+
+function updateEmpMan(){}
+
