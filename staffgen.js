@@ -3,7 +3,7 @@ const inquirer = require("inquirer");
 const cTable = require("console.table")
 let departments = ["Human Resources", "Development", "Facilities"];
 let managers = ["2", "333", "444", "555"]
-let roles = []
+let roles = ["Engineer", "Senior Engineer", "Manager", "Entry HR", "Senior HR", "Custodian", "Facilities Manager", "Manager HR"]
 const connection = mysql.createConnection({
     
     host: "localhost",
@@ -137,7 +137,7 @@ function viewRoles() {
         message: "Which roles would you like to view?",
         choices: roles
         }).then(function (answer) {
-            connection.query(query, {name: answer.dept}, function(err, res){
+            connection.query(query, {name: answer.roles}, function(err, res){
                 if (err) throw err;
                console.table(res); 
             })
