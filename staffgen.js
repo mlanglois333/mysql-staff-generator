@@ -76,8 +76,12 @@ function menu() {
 }
 
 function viewAll() { 
-
-    init();
+    var query = "SELECT employee.id, employee.first_name, employee.last_name, employee.manager_id, employee.role_id, role.title, role.salary, department.id, department.name FROM employee INNER JOIN role ON role.id = employee.role_id JOIN department ON department.id = role.department_id" ;
+    connection.query(query, function(err,res){
+        if (err) throw err;
+        console.table(res);
+        menu();
+    });
 }
 
 function viewByDept() { }
