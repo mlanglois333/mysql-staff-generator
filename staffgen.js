@@ -16,11 +16,15 @@ connection.connect(function (err) {
 });
 
 function init() {
-var query = "SELECT employee.first_name, employee.last_name FROM employee" ;
+var query = "SELECT employee.first_name, employee.last_name, role.title FROM employee INNER JOIN role ON role.id = employee.role_id" ;
+console.log("Welcome to the staff database! Here are our current employees:")
 connection.query(query, function(err,res){
     if (err) throw err;
     console.table(res);
+    menu();
 });
+
+function menu() {
     inquirer.prompt({
         name: "action",
         type: "list",
@@ -68,6 +72,7 @@ connection.query(query, function(err,res){
         }
     })
 
+}
 }
 
 function viewAll() { }
