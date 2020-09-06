@@ -1,0 +1,24 @@
+{
+  "name": "mysql-staff-generator",
+  "version": "1.0.0",
+  "description": "Mysql/nodeJs Staff Roster",
+  "main": "staffgen.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mlanglois333/mysql-staff-generator.git"
+  },
+  "author": "Marc Langlois",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mlanglois333/mysql-staff-generator/issues"
+  },
+  "homepage": "https://github.com/mlanglois333/mysql-staff-generator#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^7.3.3",
+    "mysql": "^2.18.1"
+  }
+}

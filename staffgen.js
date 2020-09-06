@@ -10,14 +10,17 @@ var connection = mysql.createConnection({
     database: "staffgen"
 });
 
-connection.connect(function (err, results) {
+connection.connect(function (err) {
     if (err) throw err;
-    console.table(results);
     init();
 });
 
 function init() {
-
+var query = "SELECT employee.first_name, employee.last_name FROM employee" ;
+connection.query(query, function(err,res){
+    if (err) throw err;
+    console.table(res);
+});
     inquirer.prompt({
         name: "action",
         type: "list",
