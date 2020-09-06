@@ -2,6 +2,8 @@ const mysql = require("mysql");
 const inquirer = require("inquirer");
 const cTable = require("console.table")
 let departments = ["Human Resources", "Development", "Facilities"];
+let managers = ["2", "333", "444", "555"]
+let roles = []
 const connection = mysql.createConnection({
     
     host: "localhost",
@@ -110,9 +112,38 @@ function viewByDept() {
     })
 }
 
-function viewByMan() { }
+function viewByMan() {
+    const query = "SELECT employee.id, employee.first_name, employee.last_name, role.title, role.salary, department.name FROM employee INNER JOIN role ON role.id = employee.role_id JOIN department ON department.id = role.department_id WHERE ?" ;
+    inquirer.prompt({
+        name: "man",
+        type: "list",
+        message: "Select manager ID number",
+        choices: managers
+        }).then(function (answer) {
+            connection.query(query, {manager_id: answer.man}, function(err, res){
+                if (err) throw err;
+               console.table(res); 
+            })
+            
+    })
+ }
 
-function viewRoles() { }
+function viewRoles() {
+
+    const query = "SELECT employee.id, employee.first_name, employee.last_name, role.title, role.salary, department.name FROM employee INNER JOIN role ON role.id = employee.role_id JOIN department ON department.id = role.department_id WHERE ?" ;
+    inquirer.prompt({
+        name: "role",
+        type: "list",
+        message: "Which roles would you like to view?",
+        choices: roles
+        }).then(function (answer) {
+            connection.query(query, {name: answer.dept}, function(err, res){
+                if (err) throw err;
+               console.table(res); 
+            })
+            
+    })
+ }
 
 function removeEmp() { }
 
