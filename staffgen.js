@@ -4,7 +4,11 @@ const cTable = require("console.table")
 let departments = ["Human Resources", "Development", "Facilities"];
 let managers = [2, 333, 444, 555];
 let roles = ["Engineer", "Senior Engineer", "Manager", "Entry HR", "Senior HR", "Custodian", "Facilities Manager", "Manager HR"];
-let roleIds =[1, 2, 3, 4, 5, 6, 7, 8];
+let roleIds = [1, 2, 3, 4, 5, 6, 7, 8];
+const staffQu = "SELECT employee.id, employee.first_name, employee.last_name FROM employee";
+const roleQu = "SELECT role.id, role.title, department.name FROM role JOIN department ON department.id=role.department_id";
+const deptQu = "SELECT department.id, department.name FROM department";
+const manQu = "SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name FROM employee JOIN role ON role.id=employee.role_id JOIN department ON department.id=role.department_id WHERE employee.id='null'";
 const connection = mysql.createConnection({
 
     host: "localhost",
@@ -104,6 +108,7 @@ function viewAll() {
 
 function viewByDept() {
     const query = "SELECT employee.id, employee.first_name, employee.last_name, role.title, role.salary, department.name FROM employee INNER JOIN role ON role.id = employee.role_id JOIN department ON department.id = role.department_id WHERE ?";
+    displayQuery(deptQu);
     inquirer.prompt({
         name: "dept",
         type: "list",
@@ -121,6 +126,7 @@ function viewByDept() {
 
 function viewByMan() {
     const query = "SELECT employee.id, employee.first_name, employee.last_name, role.title, role.salary, department.name FROM employee INNER JOIN role ON role.id = employee.role_id JOIN department ON department.id = role.department_id WHERE ?";
+    displayQuery(manQu);
     inquirer.prompt({
         name: "man",
         type: "list",
@@ -139,6 +145,7 @@ function viewByMan() {
 function viewRoles() {
 
     const query = "SELECT employee.id, employee.first_name, employee.last_name, role.title, role.salary, department.name FROM employee JOIN role ON role.id = employee.role_id JOIN department ON department.id = role.department_id WHERE ?";
+    displayQuery(roleQu);
     inquirer.prompt({
         name: "role",
         type: "list",
@@ -159,10 +166,10 @@ function addEmp() {
     inquirer
         .prompt([
             {
-            name: "empid",
-            type: "input",
-            message: "ID number of new employee:"
-        },
+                name: "empid",
+                type: "input",
+                message: "ID number of new employee:"
+            },
             {
                 name: "empfirst",
                 type: "input",
@@ -185,23 +192,24 @@ function addEmp() {
                 type: "list",
                 message: "Manager ID",
                 choices: managers
-            
+
             }]).then(function (answer) {
-                var numid= Number(answer.empid);
+                var numid = Number(answer.empid);
                 console.log(numid);
                 console.log(typeof answer.empid);
-                connection.query('INSERT INTO employee SET ?', { id: numid, first_name: answer.empfirst, last_name:answer.emplast, role_id: answer.emprole, manager_id: answer.empman},
-                function (err, res) {
-                    if (err) throw err;
-                    console.log(`${answer.empfirst} ${answer.emplast} has been added to the database`);
-                    menu();
-                });
+                connection.query('INSERT INTO employee SET ?', { id: numid, first_name: answer.empfirst, last_name: answer.emplast, role_id: answer.emprole, manager_id: answer.empman },
+                    function (err, res) {
+                        if (err) throw err;
+                        console.log(`${answer.empfirst} ${answer.emplast} has been added to the database`);
+                        menu();
+                    });
 
             })
 }
 
 
 function removeEmp() {
+    displayQuery(staffQu);
 
     inquirer
         .prompt({
@@ -213,14 +221,64 @@ function removeEmp() {
             var query = `DELETE FROM employee WHERE id = ${answer.remove}`;
             connection.query(query, function (err, res) {
                 if (err) throw err;
-                console.log(`Employee number ${answer.remove} has been removed.`)
+                console.log(`Employee number ${answer.remove} has been removed.`);
+                menu();
 
 
             });
         });
-    }
+}
 
-function updateEmpRole() { }
+function updateEmpRole() {
+    displayQuery(staffQu);
+    displayQuery(roleQu);
+    inquirer
+        .prompt([
+            {
+                name: "empid",
+                type: "input",
+                message: "ID number of employee:"
+            },
+            {
+                name: "emprole",
+                type: "list",
+                message: "Select new role:",
+                choices: roleIds
+            },]).then(function (answer) {
 
-function updateEmpMan() { }
+                const query = `UPDATE employees SET role_id= ${answer.emprole} WHERE id= ${answer.empid}`
+                connection.query(query, function (err, res) {
+                    if (err) throw err;
+                    console.log(`Employee number ${answer.empid} has been changed to ${answer.emprole} `)
+                })
+            })
+}
+
+function updateEmpMan() {
+
+    displayQuery(staffQu);
+    displayQuery(manQu);
+
+    inquirer
+        .prompt([
+            {
+                name: "empid",
+                type: "input",
+                message: "ID number of employee:"
+            },
+            {
+                name: "empman",
+                type: "list",
+                message: "Select new manager:",
+                choices: managers
+            },]).then(function (answer) {
+
+                const query = `UPDATE employees SET manager_id= ${answer.empman} WHERE id= ${answer.empid}`
+                connection.query(query, function (err, res) {
+                    if (err) throw err;
+                    console.log(`Employee number ${answer.empid} has been changed to manager ${answer.empman} `);
+                    menu();
+                })
+            })
+}
 
