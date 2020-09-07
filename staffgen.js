@@ -190,8 +190,8 @@ function addEmp() {
                 var numid= Number(answer.empid);
                 console.log(numid);
                 console.log(typeof answer.empid);
-                var query = 'INSERT INTO employee (id, first_name, last_name, role_id, manager_id) VALUES (' + numid +',' + answer.empfirst +',' + answer.emplast +',' + answer.emprole +',' + answer.empman +')';
-                connection.query(query, function (err, res) {
+                connection.query('INSERT INTO employee SET ?', { id: numid, first_name: answer.empfirst, last_name:answer.emplast, role_id: answer.emprole, manager_id: answer.empman},
+                function (err, res) {
                     if (err) throw err;
                     console.log(`${answer.empfirst} ${answer.emplast} has been added to the database`);
                     menu();
@@ -213,7 +213,7 @@ function removeEmp() {
             var query = `DELETE FROM employee WHERE id = ${answer.remove}`;
             connection.query(query, function (err, res) {
                 if (err) throw err;
-                console.log(`Employee number ${answer.input} has been removed.`)
+                console.log(`Employee number ${answer.remove} has been removed.`)
 
 
             });
