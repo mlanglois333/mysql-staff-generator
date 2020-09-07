@@ -31,6 +31,10 @@ function displayQuery(qu) {
     })
 }
 
+function breakout(){
+
+}
+
 function init() {
     var query = "SELECT employee.first_name, employee.last_name, role.title, department.name FROM employee INNER JOIN role ON role.id = employee.role_id JOIN department ON department.id = role.department_id";
     console.log("Welcome to the staff database! Here are our current employees:")
@@ -108,7 +112,6 @@ function viewAll() {
 
 function viewByDept() {
     const query = "SELECT employee.id, employee.first_name, employee.last_name, role.title, role.salary, department.name FROM employee INNER JOIN role ON role.id = employee.role_id JOIN department ON department.id = role.department_id WHERE ?";
-    displayQuery(deptQu);
     inquirer.prompt({
         name: "dept",
         type: "list",
@@ -122,6 +125,7 @@ function viewByDept() {
         })
 
     })
+
 }
 
 function viewByMan() {
@@ -246,12 +250,13 @@ function updateEmpRole() {
                 choices: roleIds
             },]).then(function (answer) {
 
-                const query = `UPDATE employees SET role_id= ${answer.emprole} WHERE id= ${answer.empid}`
+                const query = `UPDATE employee SET role_id= ${answer.emprole} WHERE id= ${answer.empid}`
                 connection.query(query, function (err, res) {
                     if (err) throw err;
                     console.log(`Employee number ${answer.empid} has been changed to ${answer.emprole} `)
                 })
             })
+            menu();
 }
 
 function updateEmpMan() {
@@ -273,12 +278,13 @@ function updateEmpMan() {
                 choices: managers
             },]).then(function (answer) {
 
-                const query = `UPDATE employees SET manager_id= ${answer.empman} WHERE id= ${answer.empid}`
+                const query = `UPDATE employee SET manager_id= ${answer.empman} WHERE id= ${answer.empid}`
                 connection.query(query, function (err, res) {
                     if (err) throw err;
                     console.log(`Employee number ${answer.empid} has been changed to manager ${answer.empman} `);
                     menu();
                 })
             })
+            menu();
 }
 
