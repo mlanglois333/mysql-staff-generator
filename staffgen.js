@@ -106,7 +106,8 @@ function viewByDept() {
         }).then(function (answer) {
             connection.query(query, {name: answer.dept}, function(err, res){
                 if (err) throw err;
-               console.table(res); 
+               console.table(res);
+               menu();
             })
             
     })
@@ -123,6 +124,7 @@ function viewByMan() {
             connection.query(query, {manager_id: answer.man}, function(err, res){
                 if (err) throw err;
                console.table(res); 
+               menu();
             })
             
     })
@@ -144,6 +146,48 @@ function viewRoles() {
             
     })
  }
+
+function addEmp() {
+
+    inquirer
+    .prompt({
+      name: "empid",
+      type: "input",
+      message: "ID number of new employee:"
+    },
+    {
+        name: "empfirst",
+        type: "input",
+        message: "First name:" 
+    },
+    {
+        name: "emplast",
+        type: "input",
+        message: "Last name" 
+    },
+    {
+        name: "emprole",
+        type: "list",
+        message: "Role:",
+        choices: roles ,
+
+    },
+    {
+        name: "empman",
+        type: "list",
+        message: "Manager ID",
+        choices: managers 
+    },).then(function(answer) {
+      var query = `INSERT INTO employee (id,first_name,last_name,role_id,manager_id VALUES (${answer.empid},${answer.empfirst},${answer.emplast},${answer.emprole},${answer.empman}`;
+      connection.query(query, function(err,res){
+        if (err) throw err;
+        console.log(`${answer.empfirst} ${answer.emplast} has been added to the database`);
+        menu();
+    });
+
+})
+}
+
 
 function removeEmp() { }
 
