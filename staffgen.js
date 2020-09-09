@@ -5,6 +5,7 @@ let departments = ["Human Resources", "Development", "Facilities"];
 let managers = [2, 333, 444, 555];
 let roles = ["Engineer", "Senior Engineer", "Manager", "Entry HR", "Senior HR", "Custodian", "Facilities Manager", "Manager HR"];
 let roleIds = [1, 2, 3, 4, 5, 6, 7, 8];
+let deptIds = [123, 234, 345];
 const staffQu = "SELECT employee.id, employee.first_name, employee.last_name FROM employee";
 const roleQu = "SELECT role.id, role.title, department.name FROM role JOIN department ON department.id=role.department_id";
 const deptQu = "SELECT department.id, department.name FROM department";
@@ -31,7 +32,7 @@ function displayQuery(qu) {
     })
 }
 
-function breakout(){
+function breakout() {
 
 }
 
@@ -94,6 +95,15 @@ function menu() {
             case "Update Employee Manager":
                 updateEmpMan();
                 break;
+
+            case "Add Role":
+                addRole();
+                break;
+
+            case "Add Department":
+                addDepartment();
+                break;
+
 
         }
     })
@@ -199,8 +209,6 @@ function addEmp() {
 
             }]).then(function (answer) {
                 var numid = Number(answer.empid);
-                console.log(numid);
-                console.log(typeof answer.empid);
                 connection.query('INSERT INTO employee SET ?', { id: numid, first_name: answer.empfirst, last_name: answer.emplast, role_id: answer.emprole, manager_id: answer.empman },
                     function (err, res) {
                         if (err) throw err;
@@ -253,10 +261,11 @@ function updateEmpRole() {
                 const query = `UPDATE employee SET role_id= ${answer.emprole} WHERE id= ${answer.empid}`
                 connection.query(query, function (err, res) {
                     if (err) throw err;
-                    console.log(`Employee number ${answer.empid} has been changed to ${answer.emprole} `)
+                    console.log(`Employee number ${answer.empid} has been changed to ${answer.emprole} `);
+                    menu();
                 })
             })
-            menu();
+
 }
 
 function updateEmpMan() {
@@ -285,6 +294,70 @@ function updateEmpMan() {
                     menu();
                 })
             })
-            menu();
+
+}
+
+function addRole() {
+
+    inquirer
+        .prompt([
+            {
+                name: "rolename",
+                type: "input",
+                message: "What is the name of the new role?:"
+            },
+            {
+                name: "roleid",
+                type: "input",
+                message: "Select new manager:",
+                choices: managers
+            },
+            {
+                name: "rolesalary",
+                type: "input",
+                message: "Set a salary for this role"
+            },
+            {
+                name: "roledept",
+                type: "list",
+                message: "Set the department for this role",
+                choices: deptIds
+            }]).then(function (answer) {
+                var numid = Number(answer.roleid);
+                connection.query('INSERT INTO role SET ?', { id: numid, title: answer.roletitle, salary: answer.rolesalary, department_id: answer.roledept }, function (err, res) {
+                    if (err) throw err;
+                    roleIds.push(answer.roleid);
+                    roles.push(answer.rolename);
+                    console.log(`${answer.rolename} has been added`);
+                    menu();
+                })
+            })
+}
+
+function addDepartment() {
+
+    inquirer
+        .prompt([
+            {
+                name: "deptid",
+                type: "input",
+                message: "Set an ID for your new department"
+            },
+            {
+                name: "deptname",
+                type: "input",
+                message: "Set the name for this department"
+            }]).then(function (answer) {
+                var numid = Number(answer.deptid);
+                connection.query('INSERT INTO department SET ?', { id: numid, name: answer.deptname }, function (err, res) {
+                    if (err) throw err;
+                    deptIds.push(answer.deptid);
+                    departments.push(answer.deptname);
+                    console.log(`${answer.deptname} has been added`);
+                    menu();
+                })
+            })
+
+
 }
 
