@@ -32,9 +32,6 @@ function displayQuery(qu) {
     })
 }
 
-function breakout() {
-
-}
 
 function init() {
     var query = "SELECT employee.first_name, employee.last_name, role.title, department.name FROM employee INNER JOIN role ON role.id = employee.role_id JOIN department ON department.id = role.department_id";
@@ -52,18 +49,26 @@ function menu() {
         type: "list",
         message: "Choose an option from the list:",
         choices: [
+
+
             "View all employees",
             "View employees by department",
             "View employees by manager",
             "View all roles",
             "Add new employee",
-            "Remove Employee",
+            "Add Role",
+            "Add Department",
             "Update Employee Role",
-            "Update Employee Manager"
+            "Update Employee Manager",
+            "Remove Employee",
+            "Remove Role",
+            "Remove Department"
         ]
 
     }).then(function (answer) {
         switch (answer.action) {
+
+
             case "View all employees":
                 viewAll();
                 break;
@@ -81,7 +86,7 @@ function menu() {
                 break;
 
             case "Add new employee":
-                addEmp()
+                addEmp();
                 break;
 
             case "Remove Employee":
@@ -102,6 +107,14 @@ function menu() {
 
             case "Add Department":
                 addDepartment();
+                break;
+
+            case "Remove Role":
+                removeRole();
+                break;
+
+            case "Remove Department":
+                removeDept();
                 break;
 
 
@@ -140,7 +153,6 @@ function viewByDept() {
 
 function viewByMan() {
     const query = "SELECT employee.id, employee.first_name, employee.last_name, role.title, role.salary, department.name FROM employee INNER JOIN role ON role.id = employee.role_id JOIN department ON department.id = role.department_id WHERE ?";
-    displayQuery(manQu);
     inquirer.prompt({
         name: "man",
         type: "list",
@@ -159,7 +171,6 @@ function viewByMan() {
 function viewRoles() {
 
     const query = "SELECT employee.id, employee.first_name, employee.last_name, role.title, role.salary, department.name FROM employee JOIN role ON role.id = employee.role_id JOIN department ON department.id = role.department_id WHERE ?";
-    displayQuery(roleQu);
     inquirer.prompt({
         name: "role",
         type: "list",
@@ -309,8 +320,8 @@ function addRole() {
             {
                 name: "roleid",
                 type: "input",
-                message: "Select new manager:",
-                choices: managers
+                message: "Create an ID for this role:",
+                
             },
             {
                 name: "rolesalary",
@@ -324,7 +335,7 @@ function addRole() {
                 choices: deptIds
             }]).then(function (answer) {
                 var numid = Number(answer.roleid);
-                connection.query('INSERT INTO role SET ?', { id: numid, title: answer.roletitle, salary: answer.rolesalary, department_id: answer.roledept }, function (err, res) {
+                connection.query('INSERT INTO role SET ?', { id: numid, title: answer.rolename, salary: answer.rolesalary, department_id: answer.roledept }, function (err, res) {
                     if (err) throw err;
                     roleIds.push(answer.roleid);
                     roles.push(answer.rolename);
@@ -360,4 +371,52 @@ function addDepartment() {
 
 
 }
+
+function removeRole() {
+
+    displayQuery(roleQu)
+
+    inquirer
+        .prompt({
+            name: "remove",
+            type: "input",
+            message: "Role ID to delete:"
+            
+        })
+        .then(function (answer) {
+            var query = `DELETE FROM role WHERE id = ${answer.remove}`;
+            connection.query(query, function (err, res) {
+                if (err) throw err;
+                console.log(` ${answer.remove} has been removed.`);
+                menu();
+
+
+            });
+        });
+}
+
+function removeDept() {
+
+    displayQuery(deptQu);
+
+    inquirer
+        .prompt({
+            name: "remove",
+            type: "input",
+            message: "Remove which department?"
+     
+        })
+        .then(function (answer) {
+            var query = `DELETE FROM department WHERE id = ${answer.remove}`;
+            connection.query(query, function (err, res) {
+                if (err) throw err;
+                console.log(`${answer.remove} has been removed.`);
+                menu();
+
+
+            });
+        });
+}
+
+
 
